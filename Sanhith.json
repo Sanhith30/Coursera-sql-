@@ -1,0 +1,70 @@
+-- Drop existing database if it exists and create a new one
+DROP DATABASE IF EXISTS roster;
+CREATE DATABASE roster;
+
+-- Use the newly created database
+USE roster;
+
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS Member;
+DROP TABLE IF EXISTS `User`;
+DROP TABLE IF EXISTS Course;
+
+-- Create tables
+CREATE TABLE `User` (
+    user_id     INTEGER NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(128) UNIQUE,
+    PRIMARY KEY(user_id)
+) ENGINE=InnoDB CHARACTER SET=utf8;
+
+CREATE TABLE Course (
+    course_id     INTEGER NOT NULL AUTO_INCREMENT,
+    title         VARCHAR(128) UNIQUE,
+    PRIMARY KEY(course_id)
+) ENGINE=InnoDB CHARACTER SET=utf8;
+
+CREATE TABLE Member (
+    user_id       INTEGER,
+    course_id     INTEGER,
+    role          INTEGER,
+    CONSTRAINT FOREIGN KEY (user_id) REFERENCES `User` (user_id)
+      ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FOREIGN KEY (course_id) REFERENCES Course (course_id)
+       ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (user_id, course_id)
+) ENGINE=InnoDB CHARACTER SET=utf8;
+
+-- Insert data into `User` table
+INSERT INTO `User` (name) VALUES 
+('Raza'), ('Anja'), ('Dana'), ('Johndean'), ('Tanzina'),
+('Setana'), ('Airen'), ('Bader'), ('Callie'), ('Jeyun'),
+('Gurardass'), ('Aanya'), ('Abdur'), ('Chahat'), ('Marc');
+
+-- Insert data into `Course` table
+INSERT INTO Course (title) VALUES 
+('si106'), ('si110'), ('si206');
+
+-- Insert data into `Member` table
+INSERT INTO Member (user_id, course_id, role) VALUES 
+(1, 1, 1),  -- Raza, si106, Instructor
+(2, 1, 0),  -- Anja, si106, Learner
+(3, 1, 0),  -- Dana, si106, Learner
+(4, 1, 0),  -- Johndean, si106, Learner
+(5, 1, 0),  -- Tanzina, si106, Learner
+(6, 2, 1),  -- Setana, si110, Instructor
+(7, 2, 0),  -- Airen, si110, Learner
+(8, 2, 0),  -- Bader, si110, Learner
+(9, 2, 0),  -- Callie, si110, Learner
+(10, 2, 0), -- Jeyun, si110, Learner
+(11, 3, 1), -- Gurardass, si206, Instructor
+(12, 3, 0), -- Aanya, si206, Learner
+(13, 3, 0), -- Abdur, si206, Learner
+(14, 3, 0), -- Chahat, si206, Learner
+(15, 3, 0); -- Marc, si206, Learner
+
+-- Verify data
+SELECT `User`.name, Course.title, Member.role
+FROM `User`
+JOIN Member ON `User`.user_id = Member.user_id
+JOIN Course ON Member.course_id = Course.course_id
+ORDER BY Course.title, Member.role DESC, `User`.name;
